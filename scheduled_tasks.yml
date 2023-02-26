@@ -1,0 +1,11 @@
+---
+- hosts: all
+  tasks:
+  - name: create a cronjob
+    cron:
+      name: "append date to /var/log/time.log"
+      user: root
+      minute: "0"
+      hour: "*"
+      job: "date >> /var/log/time.log"
+    when: "'proxy' in group_names"

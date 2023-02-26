@@ -1,0 +1,10 @@
+---
+- name: Change default target
+  hosts: all
+  tasks:
+  - name: Change default target to multi-user.target
+    file:
+      src: /usr/lib/systemd/system/multi-user.target
+      dest: /etc/systemd/system/default.target
+      state: link
+    when: "'webservers' in group_names"

@@ -1,0 +1,10 @@
+---
+- hosts: all
+  vars:
+    selinux_booleans:
+      - { name: 'httpd_can_network_connect', state: 'on', persistent: 'yes' }
+  tasks:
+  - name: reapply the role
+    include_role:
+      name: rhel-system-roles.selinux
+    when: "'webservers' in group_names"

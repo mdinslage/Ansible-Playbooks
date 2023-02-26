@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks:
+  - name: Install packages on appropriate hosts
+    yum:
+      name: 
+        - tcpdump
+        - mailx
+      state: latest
+    when: "'proxy' in group_names"
+
+  - name: install packages on appropriate hosts
+    yum:
+      name:
+        - lsof
+        - mailx
+      state: latest
+    when: "'database' in group_names"

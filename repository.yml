@@ -1,0 +1,12 @@
+---
+- hosts: all
+  tasks:
+  - name: create repo
+    yum_repository:
+      name: mysql80-community
+      description: "mysql80-community"
+      baseurl: http://repo.mysql.com/yum/mysql-8.0-community/el/8/x86_64/
+      gpgcheck: yes
+      gpgkey: http://repo.mysql.com/RPM-GPG-KEY-mysql
+      enabled: yes
+    when: "'database' in group_names"

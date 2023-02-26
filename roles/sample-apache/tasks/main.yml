@@ -1,0 +1,33 @@
+---
+- name: install packages
+  yum:
+    name:
+      - httpd
+      - mod_ssl
+      - php
+
+- name: Open firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - http
+    - https
+
+- name: restart the firewall
+  service:
+    name: firewalld
+    state: restarted
+
+- name: start httpd service
+  service:
+    name: httpd
+    enabled: yes
+    state: started
+
+- name: copy index.html template
+  template: 
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: restart_apache

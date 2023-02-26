@@ -1,0 +1,27 @@
+---
+- hosts: all
+  tasks:
+  - name: install required package on nodes
+    yum:
+      name: policycoreutils-python-utils
+      state: latest
+    when: "'database' in group_names"
+
+  - name: copy template to destination
+    template:
+      src: templates/server_list.j2
+      dest: /etc/server_list.txt
+      owner: ansible
+      mode: '0600'
+    when: "'database' in group_names"
+
+  - name: Allow apache to modify files in /srv/git_repos
+    sefcontext:
+      target: '/etc/server_list.txt'
+      setype: net_conf_t
+      state: present
+    when: "'database' in group_names"
+
+  - name: Apply new SELinux file context to filesystem
+    command: restorecon -irv /srv/git_repos
+    when: "'database' in group_names"

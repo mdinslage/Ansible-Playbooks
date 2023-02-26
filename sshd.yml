@@ -1,0 +1,25 @@
+---
+- hosts: all
+  tasks:
+  - name: edit the sshd_config file to set Banner
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#Banner'
+      line: "Banner=/etc/motd"
+    
+  - name: edit the sshd_config to enable X11Forwarding
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#X11Forwarding'
+      line: "X11Forwarding yes"
+
+  - name: edit the sshd_config file to set Max Authentication tries to 3
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^#MaxAuthTries'
+      line: "MaxAuthTries 3"
+
+  - name: restart the sshd service
+    service:
+      name: sshd
+      state: restarted

@@ -1,0 +1,39 @@
+---
+- name: Update and reboot Red Hat family servers
+  hosts: RedHat
+  become: yes
+  tasks:
+    - name: Install yum-utils
+      yum:
+        name: yum-utils
+        state: latest
+
+    - name: Update packages
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+      register: yum_output
+
+    - name: Remove packates not needed anymore
+      yum:
+        autoremove: yes
+
+    - name: Check if reboot_required
+      shell:
+        cmd: "needs-restarting -r"
+      changed_when: false
+      failed_when: reboot_required.rc != 0 and reboot_required.rc != 1
+      check_mode: false
+      register: reboot_required
+
+    - name: Report reboot_required
+      debug:
+        msg: "{{ reboot_required.rc | bool }}"
+      changed_when: reboot_required.rc == 1
+      check_mode: false
+
+    - name: Reboot if required
+      reboot:
+      when: reboot_required.rc == 1
+
